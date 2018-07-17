@@ -1,0 +1,22 @@
+{
+  "name": "backandfrontlearning",
+  "version": "1.0.0",
+  "description": "A simple TODO list will be implements on node.js (express) and react-redux on the frontend side",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vladimirFr89/backAndFrontLearning.git"
+  },
+  "author": "Vladimir Fedorin",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/vladimirFr89/backAndFrontLearning/issues"
+  },
+  "homepage": "https://github.com/vladimirFr89/backAndFrontLearning#readme",
+  "dependencies": {
+    "express": "^4.16.3"
+  }
+}
