@@ -1,12 +1,8 @@
 import * as React from 'react'
-
-interface Todo {
-    id: number;
-    text: string;
-}
+import { APP } from './../interfaces/app';
 
 interface IProps {
-    todos: Todo[];
+    todos: APP.TodoItem[];
 }
 
 export class ListTodo extends React.Component<IProps,{}> {
