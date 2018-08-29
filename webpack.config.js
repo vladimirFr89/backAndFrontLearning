@@ -5,7 +5,7 @@ let HtmlWebpackPlugin = require('html-webpack-plugin');
 module.exports = {
     context: path.resolve(__dirname, './frontend'),
 
-    entry: './src/index.ts',
+    entry: './src/index.tsx',
 
     module: {
         rules: [
