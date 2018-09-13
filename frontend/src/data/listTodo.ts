@@ -1,4 +1,3 @@
-import { APP } from './../interfaces/app'
 export const getTodoData = function(): APP.TodoItem[] {
     return [
         { id: 1, text: 'Изучить js' },
