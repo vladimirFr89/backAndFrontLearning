@@ -13,6 +13,15 @@ module.exports = {
                 test: /\.tsx?$/,
                 use: 'ts-loader',
                 exclude: /node_modules/
+            },
+            {
+                test: /\.styl$/,
+                exclude: /node_modules/,
+                use: [
+                    { loader: "style-loader" },
+                    { loader: "css-loader" },
+                    { loader: "stylus-loader" },
+                ]
             }
         ]
     },
