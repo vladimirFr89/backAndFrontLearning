@@ -1,4 +1,5 @@
 import * as React from 'react'
+const axios = require('axios');
 import '../styles/main.styl'
 
 import { ToDo } from './ToDo'
@@ -21,8 +22,8 @@ export class ListTodo extends React.Component<IProps, IState> {
     constructor(props: IProps) {
         super(props);
         this.state = {
-            list: this.props.todos.slice(),
-            uniqueId: this.props.todos.length,
+            list: [],
+            uniqueId: 0,
             taskValue: "",
             isTaskFormDisabled: true,
             isCreateTaskButtonDisabled: true,
@@ -37,6 +38,25 @@ export class ListTodo extends React.Component<IProps, IState> {
         this.addItem = this.addItem.bind(this);
         //удаляет элемент списка
         this.removeItem = this.removeItem.bind(this);
+    }
+
+    componentDidMount() {
+        console.log('componentDidMount')
+        axios.get('/api/getList')
+            .then( (response: any)=> {
+                const targetKey = 'data';
+                if (response && response.hasOwnProperty(targetKey)) {
+                    const todos = [...response[targetKey]];
+                    console.log(todos);
+                    this.setState({
+                        list: todos
+                    })
+                }
+            })
+            .catch(function (error: any) {
+                console.log(error);
+            })
+
     }
 
     onTaskValueChange(e: ChangeEvent<HTMLInputElement>){
@@ -85,7 +105,14 @@ export class ListTodo extends React.Component<IProps, IState> {
                 break;
             }
         }
+
         if (deletedIdx >= 0) {
+            axios.get(`/api/getList/remove/${deletedIdx}`)
+                .then(function (responce:any) {
+
+                }).catch(function (error: any) {
+                    console.log(error)
+                });
             newList.splice(deletedIdx,1);
             this.setState({
                 list: newList
@@ -94,6 +121,7 @@ export class ListTodo extends React.Component<IProps, IState> {
     };
 
     render() {
+        console.log('render ListTodo');
         return (
             <div>
                 <ul>
