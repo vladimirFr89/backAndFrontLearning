@@ -12,7 +12,8 @@ export class ToDo extends React.Component<IProps, {}> {
         this.onRemoveBtnClick = this.onRemoveBtnClick.bind(this);
     }
 
-    onRemoveBtnClick = function() {
+    onRemoveBtnClick = function(e: React.MouseEvent<HTMLButtonElement>) {
+        e.preventDefault();
         const { item } = this.props;
         this.props.removeItem(item.id);
     };
