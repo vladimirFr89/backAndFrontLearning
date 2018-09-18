@@ -15,6 +15,19 @@ router.post('/addItem', function(req, res) {
     res.json({});
 });
 
+router.post('/updateItem', function (req, res) {
+    console.log('update Item!');
+    console.log(req.body);
+
+    for (let i = 0; i < data.length; i++) {
+        if(data[i].id === req.body.id) {
+            data[i] = {...req.body};
+            break;
+        }
+    }
+    res.json({});
+});
+
 router.get('/getItem/:id', function (req, res, next) {
     const key = 'id';
     if(!req.params.hasOwnProperty(key)) {
