@@ -5,10 +5,6 @@ import '../styles/main.styl'
 import { ToDo } from './ToDo'
 import {ChangeEvent, FormEvent} from "react";
 
-interface IProps {
-    todos: APP.TodoItem[];
-}
-
 interface IState {
     list: APP.TodoItem[];
     uniqueId: number;
@@ -17,9 +13,9 @@ interface IState {
     isCreateTaskButtonDisabled: boolean;
 }
 
-export class ListTodo extends React.Component<IProps, IState> {
+export class ListTodo extends React.Component<{}, IState> {
 
-    constructor(props: IProps) {
+    constructor(props: {}) {
         super(props);
         this.state = {
             list: [],
@@ -36,6 +32,8 @@ export class ListTodo extends React.Component<IProps, IState> {
         this.onCloseBtnClick = this.onCloseBtnClick.bind(this);
         //добавляем элемент в список
         this.addItem = this.addItem.bind(this);
+        //отметить задачу как выполненную
+        this.markTask = this.markTask.bind(this);
         //удаляет элемент списка
         this.removeItem = this.removeItem.bind(this);
     }
@@ -88,6 +86,7 @@ export class ListTodo extends React.Component<IProps, IState> {
             const newItem: APP.TodoItem = {
                 id: newId,
                 text: this.state.taskValue,
+                isDone: false,
             };
 
             httpReq.addItem(newItem, (data: any) => {
@@ -104,6 +103,19 @@ export class ListTodo extends React.Component<IProps, IState> {
             })
         }
     };
+
+    markTask(item: APP.TodoItem) {
+        httpReq.updateTask(
+            item, (data: any) => {
+                httpReq.getList((data: APP.TodoItem[]) => {
+                    const todos: APP.TodoItem[] = [...data];
+                    console.log(todos);
+                    this.setState({
+                        list: todos
+                    })
+                })
+            })
+    }
 
     removeItem(id: number) {
         httpReq.removeItem(
@@ -124,12 +136,13 @@ export class ListTodo extends React.Component<IProps, IState> {
         console.log('render ListTodo');
         return (
             <div>
-                <ul>
+                <ul className="todos-list">
                     {this.state.list.map((todo: APP.TodoItem)=>{
                         return (
                             <li key={todo.id}>
                                 <ToDo
                                     item={todo}
+                                    markTaskAsDone={this.markTask}
                                     removeItem={this.removeItem}
                                 />
                             </li>
