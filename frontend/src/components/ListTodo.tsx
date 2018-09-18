@@ -41,22 +41,33 @@ export class ListTodo extends React.Component<IProps, IState> {
     }
 
     componentDidMount() {
-        console.log('componentDidMount')
+        console.log('componentDidMount');
+        //получение списка todos с сервера
         axios.get('/api/getList')
-            .then( (response: any)=> {
+            .then((response: any)=> {
                 const targetKey = 'data';
                 if (response && response.hasOwnProperty(targetKey)) {
-                    const todos = [...response[targetKey]];
+                    const todos: APP.TodoItem[] = [...response[targetKey]];
                     console.log(todos);
                     this.setState({
-                        list: todos
+                        list: todos,
+                        uniqueId: this.getUniqueId(todos),
                     })
                 }
             })
             .catch(function (error: any) {
                 console.log(error);
             })
+    }
 
+    private getUniqueId(list: APP.TodoItem[]) {
+        let max = 0;
+        list.forEach((item) => {
+            if (item.id > max) {
+                max = item.id;
+            }
+        });
+        return max;
     }
 
     onTaskValueChange(e: ChangeEvent<HTMLInputElement>){
@@ -80,6 +91,41 @@ export class ListTodo extends React.Component<IProps, IState> {
     addItem(e: FormEvent<HTMLFormElement>) {
         e.preventDefault();
         if (this.state.taskValue.length) {
+            const newId = this.state.uniqueId + 1;
+
+            axios.post('/api/getList/addItem', {
+                id: newId,
+                text: this.state.taskValue,
+            })
+                .then((response: any) => {
+                    console.log(response);
+                    //получение списка todos с сервера
+                    axios.get('/api/getList')
+                        .then((response: any)=> {
+                            const targetKey = 'data';
+                            if (response && response.hasOwnProperty(targetKey)) {
+                                const todos = [...response[targetKey]];
+                                console.log(todos);
+                                this.setState({
+                                    list: todos,
+                                    taskValue: '',
+                                    uniqueId: newId,
+                                })
+                            }
+                        })
+                        .catch(function (error: any) {
+                            console.log(error);
+                        })
+                })
+                .catch(function (error: any) {
+                    console.log(error);
+                });
+        }
+    };
+
+    addItemOld(e: FormEvent<HTMLFormElement>) {
+        e.preventDefault();
+        if (this.state.taskValue.length) {
             const newList = [...this.state.list];
             const newId = this.state.uniqueId + 1;
             newList.push(
@@ -97,6 +143,31 @@ export class ListTodo extends React.Component<IProps, IState> {
     };
 
     removeItem(id: number) {
+        axios.get(`/api/getList/remove/${id}`)
+            .then((responce:any) => {
+                console.log(responce);
+                //получение списка todos с сервера
+                axios.get('/api/getList')
+                    .then((response: any)=> {
+                        const targetKey = 'data';
+                        if (response && response.hasOwnProperty(targetKey)) {
+                            const todos = [...response[targetKey]];
+                            console.log(todos);
+                            this.setState({
+                                list: todos
+                            })
+                        }
+                    })
+                    .catch(function (error: any) {
+                        console.log(error);
+                    })
+
+            }).catch(function (error: any) {
+            console.log(error)
+        });
+    };
+
+    removeItemOld(id: number) {
         let deletedIdx = -1;
         const newList = [...this.state.list];
         for (let i = 0; i < newList.length; i++) {
@@ -107,12 +178,6 @@ export class ListTodo extends React.Component<IProps, IState> {
         }
 
         if (deletedIdx >= 0) {
-            axios.get(`/api/getList/remove/${deletedIdx}`)
-                .then(function (responce:any) {
-
-                }).catch(function (error: any) {
-                    console.log(error)
-                });
             newList.splice(deletedIdx,1);
             this.setState({
                 list: newList
