@@ -2,7 +2,6 @@ import * as React from 'react'
 import { httpReq } from '../utils'
 import '../styles/main.styl'
 
-import { ToDo } from './ToDo'
 import {ChangeEvent, FormEvent} from "react";
 import {ItemsList} from "./ItemsList";
 
@@ -33,10 +32,8 @@ export class ListTodo extends React.Component<{}, IState> {
         this.onCloseBtnClick = this.onCloseBtnClick.bind(this);
         //добавляем элемент в список
         this.addItem = this.addItem.bind(this);
-        //отметить задачу как выполненную
-        //this.markTask = this.markTask.bind(this);
         //удаляет элемент списка
-        //this.removeItem = this.removeItem.bind(this);
+        this.removeItem = this.removeItem.bind(this);
     }
 
     componentDidMount() {
@@ -105,52 +102,27 @@ export class ListTodo extends React.Component<{}, IState> {
         }
     };
 
-    // markTask(item: APP.TodoItem) {
-    //     httpReq.updateTask(
-    //         item, (data: any) => {
-    //             httpReq.getList((data: APP.TodoItem[]) => {
-    //                 const todos: APP.TodoItem[] = [...data];
-    //                 console.log(todos);
-    //                 this.setState({
-    //                     list: todos
-    //                 })
-    //             })
-    //         })
-    // }
-
-    // removeItem(id: number) {
-    //     httpReq.removeItem(
-    //         id,
-    //         (data: any) => {
-    //             //получение списка todos с сервера
-    //             httpReq.getList((data: APP.TodoItem[])=>{
-    //                 const todos: APP.TodoItem[] = [...data];
-    //                 console.log(todos);
-    //                 this.setState({
-    //                     list: todos
-    //                 })
-    //             });
-    //         });
-    // };
+    removeItem(id: number) {
+        httpReq.removeItem(
+            id,
+            (data: any) => {
+                //получение списка todos с сервера
+                httpReq.getList((data: APP.TodoItem[])=>{
+                    const todos: APP.TodoItem[] = [...data];
+                    console.log(todos);
+                    this.setState({
+                        list: todos
+                    })
+                });
+            });
+    };
 
     render() {
         console.log('render ListTodo');
         return (
             <div>
-                <ItemsList itemsList={this.state.list} key={this.state.list.length} />
-                {/*<ul className="todos-list">*/}
-                    {/*{this.state.list.map((todo: APP.TodoItem)=>{*/}
-                        {/*return (*/}
-                            {/*<li key={todo.id}>*/}
-                                {/*<ToDo*/}
-                                    {/*item={todo}*/}
-                                    {/*markTaskAsDone={this.markTask}*/}
-                                    {/*removeItem={this.removeItem}*/}
-                                {/*/>*/}
-                            {/*</li>*/}
-                        {/*)*/}
-                    {/*})}*/}
-                {/*</ul>*/}
+                <ItemsList itemsList={this.state.list} removeItem={this.removeItem}  />
+
                 <div className={'form-container ' + (this.state.isTaskFormDisabled ? 'form-container--disabled' : '')}>
                     <form onSubmit={this.addItem} >
                         <label htmlFor="task">Новая задача:</label>

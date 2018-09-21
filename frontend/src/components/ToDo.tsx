@@ -8,6 +8,7 @@ interface IProps {
 
 interface IState {
     isDone: boolean;
+    isDeleted: boolean;
 }
 
 export class ToDo extends React.Component<IProps, IState> {
@@ -15,7 +16,8 @@ export class ToDo extends React.Component<IProps, IState> {
     constructor(props: IProps) {
         super(props);
         this.state = {
-            isDone: this.props.item.isDone
+            isDone: this.props.item.isDone,
+            isDeleted: false
         };
         //обработчик установки состояния для задачи
         this.onTaskStatusChange = this.onTaskStatusChange.bind(this);
@@ -32,16 +34,19 @@ export class ToDo extends React.Component<IProps, IState> {
         });
     };
 
-    onRemoveBtnClick = function(e: React.MouseEvent<HTMLButtonElement>) {
+    onRemoveBtnClick(e: React.MouseEvent<HTMLButtonElement>) {
         const { item } = this.props;
         this.props.removeItem(item.id);
+        this.setState({
+            isDeleted: true,
+        })
     };
 
     render() {
         const { item } = this.props;
-        console.log(`render todo: id = ${item.id} isDone = ${item.isDone}`);
+        console.log(`render todo: id = ${item.id} isDone = ${item.isDone} isDeleted = ${this.state.isDeleted}`);
         return (
-            <div>
+            <div className={'todo-item ' + (this.state.isDeleted ? 'todo-item--deleted' : '')}>
                 <div className={'taskText ' + (this.state.isDone ? 'taskText--done' : '')}>{item.text}</div>
                 <input
                     type="checkbox"

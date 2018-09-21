@@ -4,6 +4,7 @@ import { httpReq } from "../utils";
 
 interface IProps {
     itemsList: APP.TodoItem[];
+    removeItem: (id: number) => void;
 }
 
 interface IState {
@@ -37,18 +38,19 @@ export class ItemsList extends React.Component<IProps, IState>{
     }
 
     removeItem(id: number) {
-        httpReq.removeItem(
-            id,
-            (data: any) => {
-                //получение списка todos с сервера
-                httpReq.getList((data: APP.TodoItem[])=>{
-                    const todos: APP.TodoItem[] = [...data];
-                    console.log(todos);
-                    this.setState({
-                        list: todos
-                    })
-                });
-            });
+        this.props.removeItem(id);
+        // httpReq.removeItem(
+        //     id,
+        //     (data: any) => {
+        //         //получение списка todos с сервера
+        //         httpReq.getList((data: APP.TodoItem[])=>{
+        //             const todos: APP.TodoItem[] = [...data];
+        //             console.log(todos);
+        //             this.setState({
+        //                 list: todos
+        //             })
+        //         });
+        //     });
     };
 
     render() {
