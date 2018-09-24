@@ -28,6 +28,8 @@ export class ListTodo extends React.Component<{}, IState> {
         this.addItem = this.addItem.bind(this);
         //удаляет элемент списка
         this.removeItem = this.removeItem.bind(this);
+        // отмечаем задачу
+        this.markTask = this.markTask.bind(this);
     }
 
     componentDidMount() {
@@ -87,6 +89,19 @@ export class ListTodo extends React.Component<{}, IState> {
         }
     };
 
+    markTask(item: APP.TodoItem) {
+        httpReq.updateTask(
+            item, (data: any) => {
+                httpReq.getList((data: APP.TodoItem[]) => {
+                    const todos: APP.TodoItem[] = [...data];
+                    console.log(todos);
+                    this.setState({
+                        list: todos
+                    })
+                })
+            })
+    }
+
     removeItem(id: number) {
         httpReq.removeItem(
             id,
@@ -106,7 +121,11 @@ export class ListTodo extends React.Component<{}, IState> {
         console.log('render ListTodo');
         return (
             <div>
-                <ItemsList itemsList={this.state.list} removeItem={this.removeItem}  />
+                <ItemsList
+                    itemsList={this.state.list}
+                    markAsDone={this.markTask}
+                    removeItem={this.removeItem}
+                />
 
                 <TaskForm
                     isOpen={this.state.isTaskFormOpen}

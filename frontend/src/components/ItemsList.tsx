@@ -4,6 +4,7 @@ import { httpReq } from "../utils";
 
 interface IProps {
     itemsList: APP.TodoItem[];
+    markAsDone: (item: APP.TodoItem) => void;
     removeItem: (id: number) => void;
 }
 
@@ -15,21 +16,35 @@ export class ItemsList extends React.Component<IProps, {}>{
         this.markTask = this.markTask.bind(this);
         //удаляет элемент списка
         this.removeItem = this.removeItem.bind(this);
+        // считает количество выполненых задач
+        this.getDoneCount = this.getDoneCount.bind(this);
+        // считает количество невыполненных задач
+        this.getWaitingCount = this.getWaitingCount.bind(this);
     }
 
     markTask(item: APP.TodoItem) {
-        httpReq.updateTask(
-            item, (data: any) => {
-                httpReq.getList((data: APP.TodoItem[]) => {
-                    const todos: APP.TodoItem[] = [...data];
-                    console.log(todos);
-                })
-            })
+        this.props.markAsDone(item);
     }
 
     removeItem(id: number) {
         this.props.removeItem(id);
     };
+
+    private getDoneCount() {
+        const { itemsList } = this.props;
+        let doneCount: number = 0;
+
+        itemsList.forEach((item: APP.TodoItem) => {
+            if (item.isDone) doneCount += 1;
+        });
+
+        return doneCount;
+    }
+
+    private getWaitingCount(){
+        const { itemsList } = this.props;
+        return itemsList.length - this.getDoneCount();
+    }
 
     render() {
         console.log('render ItemsList');
@@ -49,7 +64,10 @@ export class ItemsList extends React.Component<IProps, {}>{
                         )
                     })}
                 </ul>
-                <div><span>Всего задач: </span><span>{this.props.itemsList.length}</span></div>
+                <div>
+                    <span>Всего задач: </span><span>{this.props.itemsList.length}</span>
+                    <span> (выполненных: <span>{this.getDoneCount()}</span>, осталось: <span>{this.getWaitingCount()}</span>)</span>
+                </div>
             </div>
         )
     }
