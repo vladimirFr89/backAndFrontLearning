@@ -2,15 +2,13 @@ import * as React from 'react'
 import { httpReq } from '../utils'
 import '../styles/main.styl'
 
-import { ToDo } from './ToDo'
-import {ChangeEvent, FormEvent} from "react";
+import { ItemsList } from "./ItemsList";
+import { TaskForm } from "./TaskForm"
 
 interface IState {
     list: APP.TodoItem[];
     uniqueId: number;
-    taskValue: string;
-    isTaskFormDisabled: boolean;
-    isCreateTaskButtonDisabled: boolean;
+    isTaskFormOpen: boolean
 }
 
 export class ListTodo extends React.Component<{}, IState> {
@@ -20,22 +18,18 @@ export class ListTodo extends React.Component<{}, IState> {
         this.state = {
             list: [],
             uniqueId: 0,
-            taskValue: "",
-            isTaskFormDisabled: true,
-            isCreateTaskButtonDisabled: true,
+            isTaskFormOpen: false,
         };
-        //обработка изменения поля ввода
-        this.onTaskValueChange = this.onTaskValueChange.bind(this);
         //показываем форму ввода для новой задачи
         this.onAddTaskBtnClick = this.onAddTaskBtnClick.bind(this);
-        //скрываем фому ввода для новой задачи
-        this.onCloseBtnClick = this.onCloseBtnClick.bind(this);
+        //скрываем фому ввода
+        this.onTaskFormClose = this.onTaskFormClose.bind(this);
         //добавляем элемент в список
         this.addItem = this.addItem.bind(this);
-        //отметить задачу как выполненную
-        this.markTask = this.markTask.bind(this);
         //удаляет элемент списка
         this.removeItem = this.removeItem.bind(this);
+        // отмечаем задачу
+        this.markTask = this.markTask.bind(this);
     }
 
     componentDidMount() {
@@ -61,31 +55,23 @@ export class ListTodo extends React.Component<{}, IState> {
         return max;
     }
 
-    onTaskValueChange(e: ChangeEvent<HTMLInputElement>){
-        e.preventDefault();
-        this.setState({
-            taskValue: e.target.value
-        })
-    }
-
     onAddTaskBtnClick(e: React.MouseEvent<HTMLButtonElement>) {
         e.preventDefault();
         this.setState({
-            isTaskFormDisabled: !this.state.isTaskFormDisabled
-        })
+            isTaskFormOpen: !this.state.isTaskFormOpen
+        });
     }
 
-    onCloseBtnClick(e: React.MouseEvent<HTMLButtonElement>) {
+    onTaskFormClose(e: React.MouseEvent<HTMLButtonElement>) {
         this.onAddTaskBtnClick(e)
     }
 
-    addItem(e: FormEvent<HTMLFormElement>) {
-        e.preventDefault();
-        if (this.state.taskValue.length) {
+    addItem(value: string) {
+        if (value.length) {
             const newId = this.state.uniqueId + 1;
             const newItem: APP.TodoItem = {
                 id: newId,
-                text: this.state.taskValue,
+                text: value,
                 isDone: false,
             };
 
@@ -96,7 +82,6 @@ export class ListTodo extends React.Component<{}, IState> {
                     console.log(todos);
                     this.setState({
                         list: todos,
-                        taskValue: '',
                         uniqueId: newId,
                     })
                 })
@@ -136,35 +121,17 @@ export class ListTodo extends React.Component<{}, IState> {
         console.log('render ListTodo');
         return (
             <div>
-                <ul className="todos-list">
-                    {this.state.list.map((todo: APP.TodoItem)=>{
-                        return (
-                            <li key={todo.id}>
-                                <ToDo
-                                    item={todo}
-                                    markTaskAsDone={this.markTask}
-                                    removeItem={this.removeItem}
-                                />
-                            </li>
-                        )
-                    })}
-                </ul>
-                <div className={'form-container ' + (this.state.isTaskFormDisabled ? 'form-container--disabled' : '')}>
-                    <form onSubmit={this.addItem} >
-                        <label htmlFor="task">Новая задача:</label>
-                        <input
-                            type="text"
-                            id="task"
-                            name="taskValue"
-                            placeholder="Название"
-                            autoComplete="off"
-                            value={this.state.taskValue}
-                            onChange={this.onTaskValueChange}
-                        />
-                        <button className={'button ' + (this.state.taskValue.length ? '' : 'button--disabled')}>Создать задачу</button>
-                    </form>
-                    <button className="button button--close-btn" onClick={this.onCloseBtnClick}>X</button>
-                </div>
+                <ItemsList
+                    itemsList={this.state.list}
+                    markAsDone={this.markTask}
+                    removeItem={this.removeItem}
+                />
+
+                <TaskForm
+                    isOpen={this.state.isTaskFormOpen}
+                    handleOnClose={this.onTaskFormClose}
+                    handleOnSubmit={this.addItem} />
+
                 <button onClick={this.onAddTaskBtnClick}>Добавить задачу</button>
             </div>
         )
