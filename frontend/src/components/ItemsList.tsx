@@ -7,17 +7,10 @@ interface IProps {
     removeItem: (id: number) => void;
 }
 
-interface IState {
-    list: APP.TodoItem[];
-}
-
-export class ItemsList extends React.Component<IProps, IState>{
+export class ItemsList extends React.Component<IProps, {}>{
 
     constructor(props: IProps) {
         super(props);
-        this.state = {
-            list: this.props.itemsList
-        };
         //отметить задачу как выполненную
         this.markTask = this.markTask.bind(this);
         //удаляет элемент списка
@@ -30,27 +23,12 @@ export class ItemsList extends React.Component<IProps, IState>{
                 httpReq.getList((data: APP.TodoItem[]) => {
                     const todos: APP.TodoItem[] = [...data];
                     console.log(todos);
-                    this.setState({
-                        list: todos
-                    })
                 })
             })
     }
 
     removeItem(id: number) {
         this.props.removeItem(id);
-        // httpReq.removeItem(
-        //     id,
-        //     (data: any) => {
-        //         //получение списка todos с сервера
-        //         httpReq.getList((data: APP.TodoItem[])=>{
-        //             const todos: APP.TodoItem[] = [...data];
-        //             console.log(todos);
-        //             this.setState({
-        //                 list: todos
-        //             })
-        //         });
-        //     });
     };
 
     render() {
@@ -71,6 +49,7 @@ export class ItemsList extends React.Component<IProps, IState>{
                         )
                     })}
                 </ul>
+                <div><span>Всего задач: </span><span>{this.props.itemsList.length}</span></div>
             </div>
         )
     }
