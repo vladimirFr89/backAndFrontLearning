@@ -1,6 +1,5 @@
 import * as React from 'react'
 import { ToDo } from "./ToDo";
-import { httpReq } from "../utils";
 
 interface IProps {
     itemsList: APP.TodoItem[];
