@@ -1,33 +1,38 @@
 import * as React from 'react'
-import { ToDo } from "./ToDo";
+import { connect} from "react-redux"
+import { fillTodo } from '../actionCreators/index'
+import ToDo from "./ToDo";
+import { httpReq } from "../utils";
 
-interface IProps {
+interface IStateProps {
     itemsList: APP.TodoItem[];
-    markAsDone: (item: APP.TodoItem) => void;
-    removeItem: (id: number) => void;
 }
 
-export class ItemsList extends React.Component<IProps, {}>{
+interface IDispatchProps {
+    fillItemList: (todos: APP.TodoItem[]) => void ;
+}
 
-    constructor(props: IProps) {
+type Props = IStateProps & IDispatchProps;
+
+class ItemsList extends React.Component<Props, {}>{
+
+    constructor(props: Props) {
         super(props);
-        //отметить задачу как выполненную
-        this.markTask = this.markTask.bind(this);
-        //удаляет элемент списка
-        this.removeItem = this.removeItem.bind(this);
         // считает количество выполненых задач
         this.getDoneCount = this.getDoneCount.bind(this);
         // считает количество невыполненных задач
         this.getWaitingCount = this.getWaitingCount.bind(this);
     }
 
-    markTask(item: APP.TodoItem) {
-        this.props.markAsDone(item);
+    componentDidMount() {
+        console.log('componentDidMount');
+        //получение списка todos с сервера
+        httpReq.getList((data: APP.TodoItem[]) => {
+            const todos: APP.TodoItem[] = [...data];
+            console.log(todos);
+            this.props.fillItemList(todos);
+        })
     }
-
-    removeItem(id: number) {
-        this.props.removeItem(id);
-    };
 
     private getDoneCount() {
         const { itemsList } = this.props;
@@ -56,8 +61,6 @@ export class ItemsList extends React.Component<IProps, {}>{
                             <li key={todo.id}>
                                 <ToDo
                                     item={todo}
-                                    markTaskAsDone={this.markTask}
-                                    removeItem={this.removeItem}
                                 />
                             </li>
                         )
@@ -71,3 +74,14 @@ export class ItemsList extends React.Component<IProps, {}>{
         )
     }
 }
+
+export default connect(
+    (state: APP.ApplicationState): IStateProps => ({ itemsList: state.todos }),
+    (dispatch): IDispatchProps => {
+        return {
+            fillItemList: (todos: APP.TodoItem[]) => {
+                dispatch(fillTodo(todos))
+            }
+        }
+    }
+)(ItemsList);

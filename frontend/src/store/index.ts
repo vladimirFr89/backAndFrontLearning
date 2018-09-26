@@ -10,7 +10,7 @@ const store = createStore(rootReducer, devToolsEnhancer());
 // store.dispatch(addTodo({id: 101, text: 'npm', isDone: false }));
 // store.dispatch(addTodo({id: 102, text: 'run', isDone: false }));
 // store.dispatch(addTodo({id: 103, text: 'start', isDone: false }));
-//
+
 // store.dispatch(updateTodo({id: 100, text: 'type', isDone: true }));
 // store.dispatch(updateTodo({id: 102, text: 'run', isDone: true }));
 //

@@ -1,8 +1,8 @@
-import { ADD_TODO, REMOVE_TODO, UPDATE_TODO } from "../actionTypes/index";
+import { ADD_TODO, REMOVE_TODO, UPDATE_TODO, FILL_TODO } from "../actionTypes/index";
 
 const initState: APP.ApplicationState = { todos: [] };
 
-export const rootReducer = (state: APP.ApplicationState = initState, action: { type: string, payload: APP.TodoItem | number}) => {
+export const rootReducer = (state: APP.ApplicationState = initState, action: { type: string, payload: APP.TodoItem | number | APP.TodoItem[]}) => {
     switch (action.type) {
         case ADD_TODO:
             return { ...state, todos:[ ...state.todos, action.payload ]};
@@ -28,6 +28,9 @@ export const rootReducer = (state: APP.ApplicationState = initState, action: { t
             });
 
             return { ...state, todos:[ ...updatedTodos ]};
+
+        case FILL_TODO:
+            return { ...state, todos:[ ...action.payload as APP.TodoItem[]] };
 
         default:
             return initState;

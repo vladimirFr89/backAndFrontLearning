@@ -1,9 +1,11 @@
 import * as React from 'react'
+import { connect} from "react-redux";
+import { addTodo } from '../actionCreators/index'
+import {httpReq} from "../utils";
 
 interface IProps {
     isOpen: boolean;
     handleOnClose: (e: React.MouseEvent<HTMLButtonElement>) => void;
-    handleOnSubmit: (value: string) => void;
 }
 
 interface IState {
@@ -11,8 +13,14 @@ interface IState {
     isCreateTaskButtonDisabled: boolean,
 }
 
-export class TaskForm extends React.Component<IProps, IState>{
-    constructor(props: IProps) {
+interface IDispatchProps {
+    addTodo: (item: APP.TodoItem) => void;
+}
+
+type Props = IProps & IDispatchProps
+
+class TaskForm extends React.Component<Props, IState>{
+    constructor(props: Props) {
         super(props);
         this.state = {
             taskValue: '',
@@ -21,6 +29,8 @@ export class TaskForm extends React.Component<IProps, IState>{
 
         // обработка изменения поля ввода
         this.onInputChange = this.onInputChange.bind(this);
+        //добавляем элемент в список
+        this.addItem = this.addItem.bind(this);
         // обработчик отправки формы на сервер
         this.onFormSubmit = this.onFormSubmit.bind(this);
     }
@@ -31,9 +41,24 @@ export class TaskForm extends React.Component<IProps, IState>{
         })
     }
 
+    addItem(value: string) {
+        if (value.length) {
+            const newId = Date.now();
+            const newItem: APP.TodoItem = {
+                id: newId,
+                text: value,
+                isDone: false,
+            };
+            // добавляет новую задачу в state
+            this.props.addTodo(newItem);
+            // отправляет на сервер
+            httpReq.addItem(newItem);
+        }
+    };
+
     onFormSubmit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
-        this.props.handleOnSubmit(this.state.taskValue);
+        this.addItem(this.state.taskValue);
         this.setState({
             taskValue: ''
         })
@@ -61,3 +86,14 @@ export class TaskForm extends React.Component<IProps, IState>{
         )
     }
 }
+
+export default connect(
+    null,
+    (dispatch):IDispatchProps => {
+        return {
+            addTodo: (item: APP.TodoItem) => {
+                dispatch(addTodo(item))
+            }
+        }
+    }
+)(TaskForm);

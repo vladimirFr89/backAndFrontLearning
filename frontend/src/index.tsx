@@ -5,15 +5,9 @@ import store from './store/index'
 
 import { App } from './components/App'
 
-const Root = () => {
-    return (
-        <Provider store = {store}>
-            <App/>
-        </Provider>
-    )
-};
-
 ReactDom.render(
-    <Root/>,
+    <Provider store = {store}>
+        <App/>
+    </Provider>,
     document.getElementById('react-app')
 );
