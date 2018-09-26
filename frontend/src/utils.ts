@@ -18,7 +18,7 @@ export const httpReq = {
         axios.post('/api/getList/addItem', {
             id: item.id,
             text: item.text,
-            isDone: false,
+            isDone: item.isDone,
         }).then(function (response: any) {
             console.log(response);
             if (callbackSuccess) {
