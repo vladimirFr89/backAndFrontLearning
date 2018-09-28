@@ -1,6 +1,9 @@
-export { rootReducer } from './rootReducer'
-export { addTodoReducer } from './addTodoReducer'
+import { combineReducers } from "redux";
 
+import todos from './todos'
+import activeFilter from './activeFilter'
+
+export default combineReducers({ activeFilter, todos });
 
 
 

@@ -1,10 +1,10 @@
-import { createStore} from "redux";
-import { devToolsEnhancer } from 'redux-devtools-extension'
-import { rootReducer } from '../reducers/index';
+import { createStore, applyMiddleware } from 'redux';
+import { composeWithDevTools } from 'redux-devtools-extension'
+import logger from 'redux-logger'
+import thunk from 'redux-thunk'
+import rootReducer from '../reducers/index';
 
 import { addTodo, removeTodo, updateTodo } from '../actionCreators/index'
-
-const store = createStore(rootReducer, devToolsEnhancer());
 
 // store.dispatch(addTodo({id: 100, text: 'type', isDone: false }));
 // store.dispatch(addTodo({id: 101, text: 'npm', isDone: false }));
@@ -18,4 +18,11 @@ const store = createStore(rootReducer, devToolsEnhancer());
 //
 // store.dispatch(updateTodo({id: 100, text: 'type', isDone: false }));
 
-export default store;
+function configureStore() {
+    const middlewares = [thunk, logger];
+    return createStore(rootReducer, composeWithDevTools(applyMiddleware(...middlewares)));
+}
+
+const store = configureStore();
+
+export default store
