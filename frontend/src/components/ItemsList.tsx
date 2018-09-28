@@ -1,8 +1,8 @@
 import * as React from 'react'
-import { connect} from "react-redux"
-import { fillTodo } from '../actionCreators/index'
+import {connect} from "react-redux"
+import {fillTodo} from '../actionCreators/index'
 import ToDo from "./ToDo";
-import { httpReq } from "../utils";
+import {httpReq} from "../utils";
 import Filters from './Filters'
 import FilterItem from './FilterItem'
 
@@ -13,6 +13,12 @@ interface IStateProps {
 
 interface IDispatchProps {
     fillItemList: (todos: APP.TodoItem[]) => void ;
+}
+
+enum FilterType {
+    ALL = "ALL",
+    DONE = "DONE",
+    WAITING = "WAITING",
 }
 
 type Props = IStateProps & IDispatchProps;
@@ -68,9 +74,9 @@ class ItemsList extends React.Component<Props, {}>{
                     })}
                 </ul>
                 <Filters>
-                    <FilterItem caption="Всего задач:" value={itemsList.length} type="ALL" />&nbsp;
-                    <FilterItem caption="Выполненных:" value={this.getDoneCount()} type="DONE" />&nbsp;
-                    <FilterItem caption="Осталось:" value={this.getWaitingCount()} type="WAITING" />
+                    <FilterItem caption="Всего задач:" value={itemsList.length} type={FilterType.ALL}/>&nbsp;
+                    <FilterItem caption="Выполненных:" value={this.getDoneCount()} type={FilterType.DONE} />&nbsp;
+                    <FilterItem caption="Осталось:" value={this.getWaitingCount()} type={FilterType.WAITING} />
                 </Filters>
             </div>
         )
@@ -83,9 +89,9 @@ export default connect(
             itemsList: state.todos,
             itemListFiltered: state.todos.filter((item: APP.TodoItem) => {
                 switch (state.activeFilter) {
-                    case 'DONE':
+                    case FilterType.DONE:
                         return item.isDone;
-                    case 'WAITING':
+                    case FilterType.WAITING:
                         return !item.isDone;
                     default:
                         return item;

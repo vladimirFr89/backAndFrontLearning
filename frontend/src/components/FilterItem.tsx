@@ -3,7 +3,7 @@ import * as React from 'react'
 interface IProps {
     caption: string;
     value: number;
-    type: string;
+    type: APP.FilterType;
     isActive?: boolean;
     toggle?: (filterType: string) => void;
 }

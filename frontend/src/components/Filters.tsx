@@ -8,7 +8,7 @@ interface IStateProps {
 }
 
 interface IDispatchProps {
-    changeFilter?: (value: string) => void,
+    changeFilter?: (value: APP.FilterType) => void,
 }
 
 type Props = IStateProps & IDispatchProps;
@@ -28,7 +28,7 @@ class Filters extends React.Component<Props, {}>{
         this.handleToggle = this.handleToggle.bind(this);
     }
 
-    handleToggle(filterType: string) {
+    handleToggle(filterType: APP.FilterType) {
         this.props.changeFilter(filterType);
     }
 
@@ -60,7 +60,7 @@ export default connect(
     (state: APP.ApplicationState):IStateProps => ({ activeFilter: state.activeFilter }),
     (dispatch):IDispatchProps => {
         return {
-            changeFilter: (value: string) => {
+            changeFilter: (value: APP.FilterType) => {
                 dispatch(changeFilter(value))
             }
         }
