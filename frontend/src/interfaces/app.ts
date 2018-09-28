@@ -1,5 +1,6 @@
 namespace APP {
     export interface ApplicationState {
+        activeFilter: string,
         todos: APP.TodoItem[],
     }
 
